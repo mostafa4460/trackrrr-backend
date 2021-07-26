@@ -5,14 +5,14 @@ const cors = require("cors");
 
 const { NotFoundError } = require("./expressError");
 
-const usersRoutes = require("./routes/users");
+const summonerRoutes = require("./routes/summoners");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/", usersRoutes);
+app.use("/summoners", summonerRoutes);
 
 /** Handle 404 errors -- this matches all other routes */
 
