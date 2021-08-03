@@ -4,5 +4,6 @@ CREATE TABLE summoners (
     profile JSONB NOT NULL,
     rank JSONB,
     matches JSONB,
+    cached_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (name, region)
 );

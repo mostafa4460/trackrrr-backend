@@ -54,9 +54,8 @@ async function getSummonerProfile(name, region) {
 
 /** Gets the summoner's rank from the League API 
  * 
- * => {
+ * => [
  *      queueType: {
- *         queueType: String ("RANKED_SOLO_5x5"),
  *         tier: String ("IRON" / "BRONZE" / "SILVEER" / etc),
  *         rank: String ("I" / "II" / "III" / etc),
  *         leaguePoints: Int,
@@ -64,14 +63,13 @@ async function getSummonerProfile(name, region) {
  *         losses: Int
  *      },  
  *      queueType: {
- *          queueType: String ("RANKED_FLEX_SR"),
  *          tier: String ("IRON" / "BRONZE" / "SILVEER" / etc),
  *          rank: String ("I" / "II" / "III" / etc),
  *          leaguePoints: Int,
  *          wins: Int,
  *          losses: Int
  *      }
- *  }
+ *  ]
 */
 
 async function getSummonerRank(region, encryptedSummonerId) {
@@ -79,18 +77,23 @@ async function getSummonerRank(region, encryptedSummonerId) {
         `https://${region}.api.riotgames.com/lol/league/v4/entries/by-summoner/${encryptedSummonerId}`,
         HEADERS
     );
-    return data.reduce((ranks, currRank) => {
-        ranks[currRank.queueType] = currRank;
-        return ranks;
-    }, {});
+    return data.map(({queueType, tier, rank, leaguePoints, wins, losses}) => ({
+        [queueType]: {
+            tier, 
+            rank, 
+            leaguePoints, 
+            wins, 
+            losses
+        }
+    }));
 };
 
 /** Gets the solo / flex matchIds from the API 
  * - each matchId is used to get more specific details about the match from the API
  * 
  * => {
- *      solo: ["soloMatchId1", "soloMatchId2", ...],
- *      flex: ["flexMatchId1", "flexMatchId2", ...]
+ *      soloMatchIds: ["soloMatchId1", "soloMatchId2", ...],
+ *      flexMatchIds: ["flexMatchId1", "flexMatchId2", ...]
  *    }
 */
 
@@ -110,8 +113,8 @@ async function getMatchIds(region, puuid, start=0, count=10) {
 /** Gets the solo / flex matches from the API using the matchIds from getMatchIds
  * 
  * => {
- *      solo: [ {id: soloMatch1}, {id: soloMatch2}, ...],
- *      flex: [ {id: flexMatch1}, {id: flexMatch2}, ...]
+ *      soloMatches: [ {id: soloMatch1, ...}, {id: soloMatch2, ...}, ...],
+ *      flexMatches: [ {id: flexMatch1, ...}, {id: flexMatch2, ...}, ...]
  *    }
 */
 
@@ -125,16 +128,33 @@ async function getSummonerMatches(region, puuid, start=0, count=10) {
         `https://${PLATFORM_REGION[region]}.api.riotgames.com/lol/match/v5/matches/${id}`,
         HEADERS
     ));
-
     const soloMatchesResp = await axios.all(getSoloMatches);
-    const soloMatches = soloMatchesResp.map(resp => ({
-        [resp.data.metadata.matchId]: resp.data.info
-    }));
     const flexMatchesResp = await axios.all(getFlexMatches);
-    const flexMatches = flexMatchesResp.map(resp => ({
-        [resp.data.metadata.matchId]: resp.data.info
-    }));
 
+    const matchData = ({data}) => ({
+        [data.metadata.matchId]: {
+            gameCreation: data.info.gameCreation,
+            gameDuration: data.info.gameDuration,
+            participants: data.info.participants.map(p => ({
+                [p.summonerName]: {
+                    win: p.win,
+                    team: p.teamId,
+                    championName: p.championName,
+                    spell1: p.summoner1Id,
+                    spell2: p.summoner2Id,
+                    primaryRune: p.perks.styles[0].style,
+                    secondaryRune: p.perks.styles[1].style,
+                    kda: `${p.kills}/${p.deaths}/${p.assists}`,
+                    champLevel: p.champLevel,
+                    cs: p.totalMinionsKilled,
+                    lane: p.lane,
+                    items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6]
+                }
+            }))
+        }
+    });
+    const soloMatches = soloMatchesResp.map(matchData);
+    const flexMatches = flexMatchesResp.map(matchData);
     return { soloMatches, flexMatches };
 };
 

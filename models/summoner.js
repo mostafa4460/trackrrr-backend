@@ -52,60 +52,7 @@ class Summoner {
         };
     }
 
-    /** Caches the whole summoner in the DB 
-     * 
-     * summoner =>
-     * {
-     *      name,
-     *      profile: { 
-     *          profileIconId, 
-     *          summonerLevel 
-     *      },
-     *      rank: {
-     *          RANKED_SOLO_5x5: {
-     *              tier,
-     *              rank,
-     *              leaguePoints,
-     *              wins,
-     *              losses
-     *          },
-     *          RANKED_FLEX_SR: { SAME }
-     *      },
-     *      matches: {
-     *          solo: [
-     *              {
-     *                  matchId: {
-     *                      gameCreation,
-     *                      gameDuration,
-     *                      participants [
-     *                          {
-     *                              championName,
-     *                              summoner1Id,
-     *                              summoner2Id,
-     *                              perks.styles[0].style,
-     *                              perks.styles[1].style,
-     *                              kills,
-     *                              deaths,
-     *                              assists,
-     *                              champLevel,
-     *                              totalMinionsKilled,
-     *                              lane,
-     *                              item0,
-     *                              item1,
-     *                              item2,
-     *                              item3,
-     *                              item4,
-     *                              item5,
-     *                              item6
-     *                          }
-     *                      ]                      
-     *                  }
-     *              }    
-     *          ],
-     *          flex: [ {SAME} ]
-     *      }
-     * }
-    */
+    /** Caches the whole summoner in the DB */
 
     static async cacheSummonerInDB(summoner, region) {
         const {name, profile, rank, matches} = summoner;
