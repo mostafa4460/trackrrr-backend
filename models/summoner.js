@@ -68,7 +68,8 @@ class Summoner {
     static async cleanupCachedMatches() {
         await db.query(
             `UPDATE summoners
-            SET matches = null
+            SET matches = null,
+            cached_at = CURRENT_TIMESTAMP
             WHERE cached_at < now() - interval '7 days'`
         );
     }
