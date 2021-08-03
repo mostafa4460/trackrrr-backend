@@ -8,6 +8,8 @@ const { NotFoundError } = require("./expressError");
 const summonerRoutes = require("./routes/summoners");
 
 const app = express();
+const schedule = require("node-schedule");
+const Summoner = require("./models/summoner");
 
 app.use(cors());
 app.use(express.json());
@@ -30,6 +32,14 @@ app.use((err, req, res, next) => {
     return res.status(status).json({
         error: { message, status },
     });
+});
+
+/** delete cached records that have been in the DB for too long 
+ * => runs every day at midnight
+*/
+schedule.scheduleJob('0 0 * * *', async () => {
+    await Summoner.cleanupCachedMatches();
+    await Summoner.deleteCachedData();
 });
 
 module.exports = app;

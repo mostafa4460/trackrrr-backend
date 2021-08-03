@@ -62,6 +62,25 @@ class Summoner {
             [name, region, JSON.stringify(profile), JSON.stringify(rank), JSON.stringify(matches)]
         );
     }
+
+    /** Deletes all the summoner matches that have been cached in the DB for 7 days */
+
+    static async cleanupCachedMatches() {
+        await db.query(
+            `UPDATE summoners
+            SET matches = null
+            WHERE cached_at < now() - interval '7 days'`
+        );
+    }
+
+    /** Deletes all summoner records that have been cached in the DB for 14 days */
+
+    static async deleteCachedData() {
+        await db.query(
+            `DELETE FROM summoners
+            WHERE cached_at < now() - interval '14 days'`
+        );
+    }
 }
 
 module.exports = Summoner;
