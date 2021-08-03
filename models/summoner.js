@@ -17,7 +17,7 @@ class Summoner {
 
     static async getCachedSummoner(name, region) {
         const summoners = await db.query(
-            `SELECT name, profile, rank, matches
+            `SELECT name, profile, rank, matches, cached_at AS last_updated
             FROM summoners
             WHERE name = $1 AND region = $2`, 
             [name, region]

@@ -16,7 +16,8 @@ router.get("/:region/:summonerName", async (req, res, next) => {
 
         let summoner;
         if (cachedSummoner) {
-            summoner = cachedSummoner;
+            summoner = {...cachedSummoner, lastUpdated: cachedSummoner.last_updated};
+            delete summoner.last_updated;
         } else {
             summoner = await Summoner.getSummonerFromAPI(summonerName, region);
             await Summoner.cacheSummonerInDB(summoner, region);
