@@ -78,13 +78,12 @@ async function getSummonerRank(region, encryptedSummonerId) {
         HEADERS
     );
     return data.map(({queueType, tier, rank, leaguePoints, wins, losses}) => ({
-        [queueType]: {
-            tier, 
-            rank, 
-            leaguePoints, 
-            wins, 
-            losses
-        }
+        queueType,
+        tier, 
+        rank, 
+        leaguePoints, 
+        wins, 
+        losses
     }));
 };
 
