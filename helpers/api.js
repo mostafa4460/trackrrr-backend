@@ -78,7 +78,7 @@ async function getSummonerRank(region, encryptedSummonerId) {
         HEADERS
     );
     return data.map(({queueType, tier, rank, leaguePoints, wins, losses}) => ({
-        queueType,
+        queueType: queueType === 'RANKED_SOLO_5x5' ? 'Ranked Solo' : 'Flex 5:5 Rank',
         tier, 
         rank, 
         leaguePoints, 
