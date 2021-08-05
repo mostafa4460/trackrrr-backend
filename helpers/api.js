@@ -131,26 +131,24 @@ async function getSummonerMatches(region, puuid, start=0, count=10) {
     const flexMatchesResp = await axios.all(getFlexMatches);
 
     const matchData = ({data}) => ({
-        [data.metadata.matchId]: {
-            gameCreation: data.info.gameCreation,
-            gameDuration: data.info.gameDuration,
-            participants: data.info.participants.map(p => ({
-                [p.summonerName]: {
-                    win: p.win,
-                    team: p.teamId,
-                    championName: p.championName,
-                    spell1: p.summoner1Id,
-                    spell2: p.summoner2Id,
-                    primaryRune: p.perks.styles[0].style,
-                    secondaryRune: p.perks.styles[1].style,
-                    kda: `${p.kills}/${p.deaths}/${p.assists}`,
-                    champLevel: p.champLevel,
-                    cs: p.totalMinionsKilled,
-                    lane: p.lane,
-                    items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6]
-                }
-            }))
-        }
+        matchId: data.metadata.matchId,
+        gameCreation: data.info.gameCreation,
+        gameDuration: data.info.gameDuration,
+        participants: data.info.participants.map(p => ({
+            summonerName: p.summonerName,
+            win: p.win,
+            team: p.teamId,
+            championName: p.championName,
+            spell1: p.summoner1Id,
+            spell2: p.summoner2Id,
+            primaryRune: p.perks.styles[0].style,
+            secondaryRune: p.perks.styles[1].style,
+            kda: `${p.kills}/${p.deaths}/${p.assists}`,
+            champLevel: p.champLevel,
+            cs: p.totalMinionsKilled,
+            lane: p.lane,
+            items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6]
+        }))
     });
     const soloMatches = soloMatchesResp.map(matchData);
     const flexMatches = flexMatchesResp.map(matchData);
