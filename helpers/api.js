@@ -3,6 +3,8 @@
 "use strict";
 
 const axios = require("axios");
+const sums = require("../summoner.json");
+const runes = require("../runesReforged.json");
 
 /** League platforms mapped to regions 
  * - used for the League Match API, since it uses region names (americas, asia, europe)
@@ -139,10 +141,10 @@ async function getSummonerMatches(region, puuid, start=0, count=10) {
             win: p.win,
             team: p.teamId,
             championName: p.championName,
-            spell1: p.summoner1Id,
-            spell2: p.summoner2Id,
-            primaryRune: p.perks.styles[0].style,
-            secondaryRune: p.perks.styles[1].style,
+            spell1: sums[p.summoner1Id],
+            spell2: sums[p.summoner2Id],
+            primaryRune: runes.find(r => r.id === p.perks.styles[0].style).icon,
+            secondaryRune: runes.find(r => r.id === p.perks.styles[1].style).icon,
             kda: `${p.kills}/${p.deaths}/${p.assists}`,
             champLevel: p.champLevel,
             cs: p.totalMinionsKilled,
