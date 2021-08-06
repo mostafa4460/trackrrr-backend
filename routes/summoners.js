@@ -28,4 +28,17 @@ router.get("/:region/:summonerName", async (req, res, next) => {
     }
 });
 
+/** Get the summoner from the League API and recache it in the DB */
+
+router.get("/:region/:summonerName/update", async (req, res, next) => {
+    try {
+        const {summonerName, region} = req.params;
+        const summoner = await Summoner.getSummonerFromAPI(summonerName, region);
+        const lastUpdated = await Summoner.updateSummoner(summoner, region);
+        return res.json({ summoner: {...summoner, lastUpdated}});
+    } catch (err) {
+        return next(err);
+    }
+});
+
 module.exports = router;

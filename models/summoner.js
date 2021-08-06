@@ -82,6 +82,29 @@ class Summoner {
             WHERE cached_at < now() - interval '14 days'`
         );
     }
+
+    /** Update (recache) the summoner in the DB
+     * - also update the cached_at to the current timestamp
+    */
+
+    static async updateSummoner(summoner, region) {
+        await db.query(
+            `UPDATE summoners
+            SET profile = $1,
+                rank = $2,
+                matches = $3,
+                cached_at = CURRENT_TIMESTAMP
+            WHERE name = $4 AND region = $5
+            RETURNING cached_at`,
+            [
+                JSON.stringify(summoner.profile),
+                JSON.stringify(summoner.rank),
+                JSON.stringify(summoner.matches),
+                summoner.name,
+                region
+            ]
+        );
+    }
 }
 
 module.exports = Summoner;
