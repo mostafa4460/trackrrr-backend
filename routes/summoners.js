@@ -35,7 +35,7 @@ router.get("/:region/:summonerName/update", async (req, res, next) => {
         const {summonerName, region} = req.params;
         const summoner = await Summoner.getSummonerFromAPI(summonerName, region);
         const lastUpdated = await Summoner.updateSummoner(summoner, region);
-        return res.json({ summoner: {...summoner, lastUpdated}});
+        return res.json({ summoner: {...summoner, lastUpdated: lastUpdated.cached_at}});
     } catch (err) {
         return next(err);
     }

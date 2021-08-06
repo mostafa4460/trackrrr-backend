@@ -84,11 +84,11 @@ class Summoner {
     }
 
     /** Update (recache) the summoner in the DB
-     * - also update the cached_at to the current timestamp
+     * - also update cached_at to the current timestamp and return that
     */
 
     static async updateSummoner(summoner, region) {
-        await db.query(
+        const lastUpdated = await db.query(
             `UPDATE summoners
             SET profile = $1,
                 rank = $2,
@@ -104,6 +104,7 @@ class Summoner {
                 region
             ]
         );
+        return lastUpdated.rows[0];
     }
 }
 
