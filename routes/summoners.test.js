@@ -62,7 +62,10 @@ describe("GET /summoners/:region/:summonerName", () => {
         expect(cachedSummoner).not.toBe(undefined);
 
         const getSummonerResp = await request(app).get("/summoners/fakeServer/fakeSummoner");
-        expect(getSummonerResp.body).toEqual({ summoner: FAKE_SUMMONER });
+        expect(getSummonerResp.body).toEqual({ summoner: {
+            ...FAKE_SUMMONER,
+            lastUpdated: expect.any(String)
+        }});
 
         // the getSummonerFromAPI fn did not get called
         // instead, the summoner was retrieved from the DB

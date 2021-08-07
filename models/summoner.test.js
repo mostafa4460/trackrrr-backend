@@ -26,6 +26,9 @@ describe("Tests the Summoner model functions for retrieving and caching data", (
         // cache a summoner in the DB
         await Summoner.cacheSummonerInDB(FAKE_SUMMONER, "fakeServer");
         foundSummoner = await Summoner.getCachedSummoner("fakeSummoner", "fakeServer");
-        expect(foundSummoner).toEqual(FAKE_SUMMONER);
+        expect(foundSummoner).toEqual({
+            ...FAKE_SUMMONER,
+            last_updated: expect.anything()
+        });
     });
 });
